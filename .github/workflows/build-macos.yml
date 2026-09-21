@@ -1,0 +1,38 @@
+name: Build macOS app
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: macos-15
+            arch: arm64
+          - runner: macos-15-intel
+            arch: x86_64
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install FFmpeg
+        run: brew install ffmpeg
+      - name: Build app bundle
+        env:
+          ARCH: ${{ matrix.arch }}
+          FFMPEG_BIN: /opt/homebrew/bin
+        run: |
+          if [ "${ARCH}" = "x86_64" ]; then export FFMPEG_BIN=/usr/local/bin; fi
+          chmod +x build_mac.sh
+          ./build_mac.sh
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: KuaishouLiveAssistant_macOS_${{ matrix.arch }}
+          path: |
+            release/*_macOS_${{ matrix.arch }}.zip
+            release/*_macOS_${{ matrix.arch }}.zip.sha256

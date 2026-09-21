@@ -28,7 +28,7 @@ jobs:
           FFMPEG_BIN: /opt/homebrew/bin
         run: |
           if [ "${ARCH}" = "x86_64" ]; then export FFMPEG_BIN=/usr/local/bin; fi
-          python3 -m venv .venv`r`n          source .venv/bin/activate`r`n          chmod +x build_mac.sh`r`n          ./build_mac.sh
+          python3 -m venv .venv`n          source .venv/bin/activate`n          chmod +x build_mac.sh`n          ./build_mac.sh
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
